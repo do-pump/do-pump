@@ -1,4 +1,4 @@
-This utility allws you to manage sets of VMs in Digital Ocean
+This utility allows you to manage sets of VMs in Digital Ocean
 
 # Examples
 
