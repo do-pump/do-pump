@@ -10,7 +10,6 @@
     - image,
     - user data file to execute by default (should be completely overridden by command)
 - Feature: set labels for vm’s and search by labels (local DB required)
-- Feature: show list of VM's and their status
 - Tweak: use local DB to speedup lookups, this DB also should be synced with DO and differences should be highlighted for client
 - Feature: colorization (define rules for future features)
 - Refactoring: decompose logic in classes
