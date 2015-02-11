@@ -227,7 +227,7 @@ def droplet_destroy(is_all, ids, names, prefixes, is_yes):
         is_yes)
 
 
-@droplet.command(name='ssh')
+@cli.command(name='ssh', help='ssh to droplet')
 @click.argument('name', type=click.STRING)
 @click.option('-u', '--user', default='root', type=click.STRING)
 def droplet_ssh(name, user):
