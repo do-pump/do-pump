@@ -179,6 +179,10 @@ def droplet_create(user_data_file, prefix, count, size, region, is_yes):
 
 
 @droplet.command(name='destroy', short_help='delete previously created VMs')
+@click.argument(
+    'names',
+    nargs=-1,
+    type=click.STRING)
 @click.option(
     '-a',
     '--all',
@@ -191,13 +195,6 @@ def droplet_create(user_data_file, prefix, count, size, region, is_yes):
     'ids',
     multiple=True,
     type=click.INT,
-    help='destroy droplet by name')
-@click.option(
-    '-n',
-    '--name',
-    'names',
-    multiple=True,
-    type=click.STRING,
     help='destroy droplet by name')
 @click.option(
     '-p',
