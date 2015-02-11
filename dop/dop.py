@@ -77,10 +77,8 @@ def format_droplet_confirmation_message(droplets, action):
 def perform_droplet_action(droplet, action):
     time.sleep(0.3)
     if action == 'create':
-        pass
         droplet.create()
     elif action == 'destroy':
-        pass
         droplet.destroy()
 
 
@@ -258,12 +256,12 @@ def list_ssh_keys():
         click.echo("%s (%s)" % (key.name, key.id))
 
 @list_group.command(name='sizes', short_help='Show supported VM sizes')
-def list_ssh_keys():
+def list_sizes():
     for v in SIZES:
         click.echo("%s" % v)
 
 @list_group.command(name='regions', short_help='Show supported regions')
-def list_ssh_keys():
+def list_regions():
     for v in REGIONS:
         click.echo("%s" % v)
 

@@ -3,11 +3,11 @@
 - Feature: Yaml declaration of virtual machines to create with replica count e.t.c.
 - Feature: execute on selected hosts (in complement to ssh)
 - Feature: configure token
-- Feature: configure VM defaults (with Yaml): 
-    - ssh keys to provision, 
-    - size, 
-    - region, 
-    - image, 
+- Feature: configure VM defaults (with Yaml):
+    - ssh keys to provision,
+    - size,
+    - region,
+    - image,
     - user data file to execute by default (should be completely overridden by command)
 - Feature: set labels for vm’s and search by labels (local DB required)
 - Tweak: use local DB to speedup lookups, this DB also should be synced with DO and differences should be highlighted for client
@@ -16,4 +16,7 @@
 - Bash completion script
 - Package into Homebrew
 - Package into .deb
-- Register in pip
+- Register in [PyPI](https://pypi.python.org/pypi) (add setup.py)
+- Add CONTRIBUTING.md (e. g., rules for branch naming)
+- Choose and add LICENSE.txt
+- In case tests would be added, setup testing library and [Travis CI](http://docs.travis-ci.com/user/languages/python/)
