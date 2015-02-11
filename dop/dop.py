@@ -123,12 +123,14 @@ def droplet():
 @click.option('-p', '--prefix', default='node')
 @click.option('-c', '--count', default=1, help='number of VMs')
 @click.option(
+    '-s',
     '--size',
     default='2gb',
     help='type of VM',
     type=click.Choice(SIZES)
 )
 @click.option(
+    '-r',
     '--region',
     default='ams3',
     help='region of VM',
