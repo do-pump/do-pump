@@ -228,13 +228,20 @@ def droplet_destroy(is_all, ids, names, prefixes, is_yes):
 
 @cli.command(name='ssh', help='ssh to droplet')
 @click.argument('name', type=click.STRING)
+@click.argument('command', type=click.STRING, nargs=-1, default=None)
 @click.option('-u', '--user', default='root', type=click.STRING)
-def droplet_ssh(name, user):
+def droplet_ssh(name, user, command):
     matched_droplets = [d for d in DO_MANAGER.get_all_droplets() if d.name == name]
 
     if len(matched_droplets) == 1:
         d = matched_droplets[0]
-        os.system("ssh %s@%s" % (user, d.ip_address))
+        cmd = "ssh %s@%s" % (user, d.ip_address)
+
+        if command:
+            escaped_command = ' '.join(command).replace("\"", "\\\"")
+            cmd += ' "%s"' % escaped_command
+
+        os.system(cmd)
     elif len(matched_droplets) < 1:
         click.echo("Droplet %s not found" % name)
 
