@@ -1,56 +1,41 @@
 
-class DropletAttributeFormatter:
-    def __init__(self, name, value_of_attribute=None, line_entry_format='{}', table_cell_format='{}'):
-        self.name = name
+class AttributeFormatter:
+    def __init__(self, attribute_name_of_extractor, **styles):
+        self._styles = styles
 
-        self.format = format
-        self.line_entry_format = line_entry_format
-        self.table_cell_format = table_cell_format
-
-        if not value_of_attribute:
-            self.extract_value = lambda d: getattr(d, name)
-        elif hasattr(value_of_attribute, '__call__'):
-            self.extract_value = value_of_attribute
+        if hasattr(attribute_name_of_extractor, '__call__'):
+            self.extract_value = attribute_name_of_extractor
         else:
-            self.extract_value = lambda d: getattr(d, value_of_attribute)
+            self.extract_value = lambda d: getattr(d, attribute_name_of_extractor)
 
-    def format_table_cell(self, d):
-        return self.table_cell_format.format(self.extract_value(d))
-
-    def format_line_entry(self, d):
-        return self.line_entry_format.format(self.extract_value(d))
+    def format(self, d, style):
+        effective_style = self._styles[style] if style in self._styles else '{}'
+        return effective_style.format(self.extract_value(d))
 
 
-class DropletFormatter:
-    def __init__(self, *attribute_formatters):
-        self.attribute_fomrmatters = attribute_formatters
-        self.attribute_formatter_map = {f.name: f for f in attribute_formatters}
-        self.known_attributes = [f.name for f in attribute_formatters]
+class ObjectFormatter:
+    def __init__(self, **attribute_formatters):
+        self._formatter_map = attribute_formatters
+        self.attributes = attribute_formatters.keys()
 
     def unknown_attributes(self, attribute_names):
-        return [name for name in attribute_names if name not in self.attribute_formatter_map]
+        return [name for name in attribute_names if name not in self._formatter_map]
 
-    def format_line_entry(self, d, attribute_name):
-        return self.attribute_formatter_map[attribute_name].format_line_entry(d)
+    def format_attribute(self, d, attribute_name, style_name):
+        return self._formatter_map[attribute_name].format(d, style_name)
 
-    def format_line(self, d, attribute_names):
-        return [self.format_line_entry(d, n) for n in attribute_names]
-
-    def format_table_cell(self, d, attribute_name):
-        return self.attribute_formatter_map[attribute_name].format_table_cell(d)
-
-    def format_table_row(self, d, attribute_names):
-        return [self.format_table_cell(d, n) for n in attribute_names]
+    def format(self, d, attribute_names, style_name):
+        return [self.format_attribute(d, n, style_name) for n in attribute_names]
 
 
-droplet_formatter = DropletFormatter(
-    DropletAttributeFormatter('id', table_cell_format='{0:8}'),
-    DropletAttributeFormatter('name', table_cell_format='{0:>12}'),
-    DropletAttributeFormatter('ip', 'ip_address', table_cell_format='{0:15}'),
-    DropletAttributeFormatter('ipv6', 'ip_v6_address', table_cell_format='{0:39}'),
-    DropletAttributeFormatter('status', table_cell_format='{0:6}'),
-    DropletAttributeFormatter('private_ip', 'private_ip_address', table_cell_format='{0:15}'),
-    DropletAttributeFormatter('size', 'size_slug', table_cell_format='{0:5}'),
-    DropletAttributeFormatter('region', lambda d: d.region['slug'], table_cell_format='{0:4}'),
-    DropletAttributeFormatter('image', lambda d: d.image['slug'], table_cell_format='{0:16}')
+droplet_formatter = ObjectFormatter(
+    id=AttributeFormatter('id', table='{0:8}'),
+    name=AttributeFormatter('name', table='{0:>12}'),
+    ip=AttributeFormatter('ip_address', table='{0:15}'),
+    ipv6=AttributeFormatter('ip_v6_address', table='{0:39}'),
+    status=AttributeFormatter('status', table='{0:6}'),
+    private_ip=AttributeFormatter('private_ip_address', table='{0:15}'),
+    size=AttributeFormatter('size_slug', table='{0:5}'),
+    region=AttributeFormatter(lambda d: d.region['slug'], table='{0:4}'),
+    image=AttributeFormatter(lambda d: d.image['slug'], table='{0:16}')
 )

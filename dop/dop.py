@@ -253,7 +253,7 @@ def list_group():
     default=['name,status'],
     type=click.STRING,
     help='comma separated field list. Possible values: %s' %
-         ', '.join(droplet_formatter.known_attributes))
+         ', '.join(droplet_formatter.attributes))
 @click.option(
     '-s',
     '--simple',
@@ -271,13 +271,8 @@ def list_droplets(attribute, is_simple):
         click.echo("Unknown droplet attributes(s): %s" % ' '.join(unknown_attributes), err=True)
         return
 
-    def format_droplet(d):
-        if is_simple:
-            return droplet_formatter.format_line(d, attribute_names)
-        else:
-            return droplet_formatter.format_table_row(d, attribute_names)
-
-    rows = [format_droplet(d) for d in DO_MANAGER.get_all_droplets()]
+    style = 'line' if is_simple else 'table'
+    rows = [droplet_formatter.format(d, attribute_names, style) for d in DO_MANAGER.get_all_droplets()]
 
     if is_simple:
         flattened = [cell for row in rows for cell in row]
