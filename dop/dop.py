@@ -141,7 +141,6 @@ def droplet():
     '--yes',
     'is_yes',
     is_flag=True,
-    flag_value=True,
     help='answer yes for all confirmations')
 def droplet_create(user_data_file, prefix, count, size, region, is_yes):
     check_ssh_keys()
@@ -190,7 +189,6 @@ def droplet_create(user_data_file, prefix, count, size, region, is_yes):
     '--all',
     'is_all',
     is_flag=True,
-    flag_value=True,
     help='destroy ALL droplets')
 @click.option(
     '--id',
@@ -210,7 +208,6 @@ def droplet_create(user_data_file, prefix, count, size, region, is_yes):
     '--yes',
     'is_yes',
     is_flag=True,
-    flag_value=True,
     help='answer yes for all confirmations')
 def droplet_destroy(is_all, ids, names, prefixes, is_yes):
 
@@ -259,7 +256,6 @@ def list_group():
     '--simple',
     'is_simple',
     is_flag=True,
-    flag_value=True,
     type=click.STRING)
 def list_droplets(attribute, is_simple):
 

@@ -10,7 +10,8 @@ class AttributeFormatter:
 
     def format(self, d, style):
         effective_style = self._styles[style] if style in self._styles else '{}'
-        return effective_style.format(self.extract_value(d))
+        value = self.extract_value(d)
+        return effective_style.format(value if value else 'n/a')
 
 
 class ObjectFormatter:
