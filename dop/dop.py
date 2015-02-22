@@ -8,6 +8,8 @@ import digitalocean
 
 import config
 
+from formatters import droplet_formatter
+
 SIZES = [
     '512mb',
     '1gb',
@@ -32,8 +34,8 @@ REGIONS = [
     'lon1'
 ]
 
-DO_MANAGER = digitalocean.Manager(token=config.token)
 
+DO_MANAGER = digitalocean.Manager(token=config.token)
 
 def check_ssh_keys():
     if len(config.ssh_keys) < 1:
@@ -139,7 +141,6 @@ def droplet():
     '--yes',
     'is_yes',
     is_flag=True,
-    flag_value=True,
     help='answer yes for all confirmations')
 def droplet_create(user_data_file, prefix, count, size, region, is_yes):
     check_ssh_keys()
@@ -188,7 +189,6 @@ def droplet_create(user_data_file, prefix, count, size, region, is_yes):
     '--all',
     'is_all',
     is_flag=True,
-    flag_value=True,
     help='destroy ALL droplets')
 @click.option(
     '--id',
@@ -208,7 +208,6 @@ def droplet_create(user_data_file, prefix, count, size, region, is_yes):
     '--yes',
     'is_yes',
     is_flag=True,
-    flag_value=True,
     help='answer yes for all confirmations')
 def droplet_destroy(is_all, ids, names, prefixes, is_yes):
 
@@ -250,10 +249,40 @@ def droplet_ssh(name, user, command):
 def list_group():
     pass
 
-@list_group.command(name='droplets', short_help='Show created droplets')
-def list_droplets():
-    for d in DO_MANAGER.get_all_droplets():
-        click.echo("%s\t%s" % (d.name, d.status))
+@list_group.command(name='droplets', short_help='Show current droplets')
+@click.option(
+    '-a',
+    '--attribute',
+    multiple=True,
+    default=['name,status'],
+    type=click.STRING,
+    help='comma separated field list. Possible values: %s' %
+         ', '.join(droplet_formatter.attributes))
+@click.option(
+    '-s',
+    '--simple',
+    'is_simple',
+    is_flag=True,
+    type=click.STRING)
+def list_droplets(attribute, is_simple):
+
+    attribute_names = [a for line in attribute for a in line.split(',')]
+
+    unknown_attributes = droplet_formatter.unknown_attributes(attribute_names)
+
+    if len(unknown_attributes) > 0:
+        click.echo("Unknown droplet attributes(s): %s" % ' '.join(unknown_attributes), err=True)
+        return
+
+    style = 'line' if is_simple else 'table'
+    rows = [droplet_formatter.format(d, attribute_names, style) for d in DO_MANAGER.get_all_droplets()]
+
+    if is_simple:
+        flattened = [cell for row in rows for cell in row]
+        click.echo(' '.join(flattened))
+    else:
+        for row in rows:
+            click.echo(' '.join(row))
 
 
 @list_group.command(name='keys', short_help='Show registered SSH keys')
